@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<server description="Auth Microservice - MariaDB">
+
+    <featureManager>
+        <feature>restfulWS-3.1</feature>
+        <feature>jsonb-3.0</feature>
+        <feature>persistence-3.1</feature>
+        <feature>jdbc-4.3</feature>
+        <feature>cdi-4.0</feature>
+        <feature>jwt-1.0</feature>
+        <feature>mpJwt-2.1</feature>
+    </featureManager>
+
+    <jwtBuilder id="defaultJWT" issuer="https://auth.tickets.com" />
+    <httpEndpoint id="defaultHttpEndpoint" host="*" httpPort="9080" httpsPort="9443" />
+
+    <jdbcDriver id="MariaDBDriver"
+        javax.sql.DataSource="org.mariadb.jdbc.MariaDbDataSource"
+        javax.sql.ConnectionPoolDataSource="org.mariadb.jdbc.MariaDbDataSource">
+        <library>
+            <fileset dir="${server.config.dir}/mariadb" includes="mariadb-java-client-*.jar" />
+        </library>
+    </jdbcDriver>
+
+    <dataSource id="AuthDS" jndiName="jdbc/authDS" jdbcDriverRef="MariaDBDriver">
+        <properties URL="jdbc:mariadb://localhost:3306/auth_db" user="user_auth"
+            password="pass_auth" />
+        <connectionManager maxPoolSize="50" minPoolSize="10" connectionTimeout="30s"
+            agedTimeout="30m" />
+    </dataSource>
+
+    <webApplication location="auth.war" contextRoot="/" />
+
+</server>

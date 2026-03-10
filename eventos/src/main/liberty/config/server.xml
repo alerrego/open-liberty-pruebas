@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<server description="Eventos Microservice - MariaDB">
+
+    <featureManager>
+        <feature>restfulWS-3.1</feature>
+        <feature>jsonb-3.0</feature>
+        <feature>persistence-3.1</feature>
+        <feature>jdbc-4.3</feature>
+        <feature>cdi-4.0</feature>
+        <feature>mpJwt-2.1</feature>
+        <feature>jwt-1.0</feature>
+    </featureManager>
+
+    <mpJwt id="jwtConsumer"
+        issuer="https://auth.tickets.com"
+        jwksUri="http://localhost:9080/api/auth/certs" />
+
+    <httpEndpoint id="defaultHttpEndpoint" host="*" httpPort="9081" httpsPort="9444" />
+
+    <jdbcDriver id="MariaDBDriver"
+        javax.sql.DataSource="org.mariadb.jdbc.MySQLDataSource"
+        javax.sql.ConnectionPoolDataSource="org.mariadb.jdbc.MySQLDataSource">
+        <library>
+            <fileset dir="${server.config.dir}/mariadb" includes="mariadb-java-client-*.jar" />
+        </library>
+    </jdbcDriver>
+
+    <dataSource id="EventosDS" jndiName="jdbc/eventosDS" jdbcDriverRef="MariaDBDriver">
+        <properties URL="jdbc:mariadb://localhost:3306/eventos_db?createDatabaseIfNotExist=true"
+            user="root"
+            password="root" />
+        <connectionManager maxPoolSize="50" minPoolSize="10" connectionTimeout="30s"
+            agedTimeout="30m" />
+    </dataSource>
+
+    <webApplication location="eventos.war" contextRoot="/" />
+
+</server>
