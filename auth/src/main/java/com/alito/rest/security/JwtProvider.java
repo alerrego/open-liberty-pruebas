@@ -19,10 +19,11 @@ import jakarta.enterprise.context.ApplicationScoped;
 @ApplicationScoped
 public class JwtProvider {
 
-    private KeyPair rsaKey;
+    private KeyPair rsaKey; // ESTA SERIA LA CLAVE QUE DENTRO TIENE LA PUBLIC Y PRIVATE KEY, LA IDEA DE ESTO SERIA TENERLO EN .env O OTRO LADO 
 
-    private final String KID = "tickets-key-id"; // Un ID fijo para que coincidan
+    private final String KID = "tickets-key-id"; // EL KEY ID  TAMBIEN NO TIENE QUE ESTAR ASI, LA IDEA ES MIGRARLO A .env
 
+    //EL CONSTRUCTOR LE PIDO AL GENERADOR DE JAVA UN ALGORITMO RSA PARA UNA LLAVE DE 2048 BITS
     public JwtProvider(){
         try {
             KeyPairGenerator gen = KeyPairGenerator.getInstance("RSA");
@@ -34,7 +35,8 @@ public class JwtProvider {
     }
 
     //ESTE MÉTODO ES SIMILAR A LA IMPLEMENTACION DE SPRING, EXPONGO LA CLAVE PUBLICA PQ ESTA SOLO LA USAMOS PARA VERIFICAR EL TOKEN
-    //LA CLAVE PRIVADA SOLO LA TIENE EL QUE CREA EL TOKEN
+    //LA CLAVE PRIVADA SOLO LA TIENE EL QUE CREA EL TOKEN, OBTENGO LA PUBLIC KEY DE LA rsaKey, n y e SON PIEZAS MATEMATICAS DE LA rsaKey,
+    //LAS CONVIERTO A BASE64 PARA PODER ENVIARLAS COMO TEXTO EN EL JSON
     public String getPublicKeysJson() {
     try {
         RSAPublicKey pub = (RSAPublicKey) rsaKey.getPublic();
@@ -57,6 +59,8 @@ public class JwtProvider {
     }
     }
 
+    //PARA GENERAR EL TOKEN USO LA LIBRERIA DE nimbus jose, CUALQUIER COSA RECORDAR QUE ESTA LA LIBRERIA EN jwt.io
+    //Y LUEGO SE ESTABLECEN LOS CLAIMS Y TOKEN
     public String generateToken(User u) throws Exception{
         JWSSigner signer = new RSASSASigner(rsaKey.getPrivate());
 

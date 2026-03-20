@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<server description="Payment Microservice">
+    <featureManager>
+        <feature>restfulWS-3.1</feature>
+        <feature>jsonb-3.0</feature>
+        <feature>persistence-3.1</feature>
+        <feature>jdbc-4.3</feature>
+        <feature>cdi-4.0</feature>
+        <feature>mpJwt-2.1</feature>
+        <feature>jwt-1.0</feature>
+        <feature>mpRestClient-3.0</feature>
+        <feature>mpFaultTolerance-4.0</feature>
+    </featureManager>
+
+    <mpJwt id="jwtConsumer"
+        issuer="https://auth.tickets.com"
+        jwksUri="http://localhost:9080/api/auth/certs" />
+
+    <httpEndpoint id="defaultHttpEndpoint" host="*" httpPort="9083" httpsPort="9447" />
+
+    <jdbcDriver id="MariaDBDriver"
+        javax.sql.DataSource="org.mariadb.jdbc.MariaDbDataSource"
+        javax.sql.ConnectionPoolDataSource="org.mariadb.jdbc.MariaDbDataSource">
+        <library>
+            <fileset dir="${server.config.dir}/mariadb" includes="mariadb-java-client-*.jar" />
+        </library>
+    </jdbcDriver>
+
+    <dataSource id="PaymentsDS" jndiName="jdbc/paymentsDS" jdbcDriverRef="MariaDBDriver">
+        <properties URL="jdbc:mariadb://localhost:3306/payments_db?createDatabaseIfNotExist=true"
+            user="root"
+            password="root" />
+        <connectionManager maxPoolSize="50" minPoolSize="10" connectionTimeout="30s"
+            agedTimeout="30m" />
+    </dataSource>
+
+    <webApplication location="payments.war" contextRoot="/" />
+</server>

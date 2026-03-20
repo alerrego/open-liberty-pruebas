@@ -7,7 +7,7 @@
         <jta-data-source>jdbc/authDS</jta-data-source>
         <properties>
             <property name="jakarta.persistence.schema-generation.database.action"
-                value="drop-and-create" />
+                value="update" />
 
             <property name="hibernate.jdbc.batch_size" value="20" />
             <property name="hibernate.order_inserts" value="true" />

@@ -26,4 +26,22 @@ public class EventRepository {
     public List<Event> findAll() {
         return em.createQuery("SELECT e FROM Event e LEFT JOIN FETCH e.ticketTypes", Event.class).getResultList();
     }
+
+    public Event findById(Long id){
+        return em.find(Event.class, id);
+    }
+
+    @Transactional
+    public boolean decreaseStock(Long eventId, String nameTicketType, Long quantityTickets){
+        String jpql = "UPDATE TicketType t SET t.stock = t.stock - :quantity " +
+                      "WHERE t.event.id = :eventId AND t.name = :name AND t.stock >= :quantity";
+
+        int rowsModified = em.createQuery(jpql)
+            .setParameter("quantity",quantityTickets)
+            .setParameter("eventId",eventId)
+            .setParameter("name",nameTicketType)
+            .executeUpdate();
+
+        return rowsModified > 0;
+    }
 }
